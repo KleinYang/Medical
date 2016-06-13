@@ -107,9 +107,11 @@ use app\assets\AppAsset;
 
 <script>
 	var oTable;
+	var user_id;
 	jQuery(document).ready(function($){
 		$("#btnSave").click(_addFun);
-		$("#regionProvince").bind('change', function() {
+		$("#btnEdit").click(_editAjax);
+		$("#regionProvince").bind('click', function() {
 			getReion($(this).val(),"#regionCity");
 		});
 		$("#regionCity").bind('click',function (){
@@ -136,7 +138,8 @@ use app\assets\AppAsset;
 				{ "data": "id" , "title":"用户操作",
 				"createdCell": function (td, cellData, rowData, row, col) {
 				    $(td).html("<a href='javascript:void(0);'" +
-                	"onclick='_delFun("+cellData+");'>删除</a>");
+                	"onclick='_editFun("+cellData+")'>修改密码</a>&nbsp;&nbsp;")
+                    .append("<a href='javascript:void(0);' onclick='_delFun("+cellData+");'>删除</a>");
 				    }
 				},
             ],
@@ -147,9 +150,15 @@ use app\assets\AppAsset;
             }
 		});
 	});
-
+		
 	function _init() {
 		$("#myModal").modal("show");
+		$('#username').val('');
+		$('#tel').val('');
+		$('#regionProvince').val(0);
+		$('#regionCity').val('');
+		$('#regionCountry').val('');
+		$('#detailAddress').val('');
 		$("#btnEdit").hide();
 		$("#btnSave").show();
 	}
@@ -176,6 +185,52 @@ use app\assets\AppAsset;
 		});
 	}
 
+	function _editFun(id) {
+		$("#myModal").modal("show");
+		$("#btnSave").hide();
+		$("#btnEdit").show();
+		user_id =id;
+		$.ajax({
+		    url: "?r=site/usereditlist",
+		    data: {
+				id: id,
+				},
+		    type: "post",
+		    success: function (resp1) {
+		    	resp = eval('('+resp1+')');
+		        $('#username').val(resp.username);
+				$('#tel').val(resp['tel']);
+				$('#regionProvince').val(resp['region_province_id']);
+				getReion(resp['region_province_id'],"#regionCity");
+				$('#regionCity').val(resp['region_city_id']);
+				getReion(resp['region_city_id'],"#regionCountry");
+				$('#regionCountry').val(resp['region_country_id']);
+				$('#detailAddress').val(resp['user_address']);
+		    },
+		});
+	}
+
+	function _editAjax() {
+		$.ajax({
+		    type: 'POST',
+		    url: '?r=site/useredit',
+		    data: {
+		    	id: user_id,
+	  			username:$('#username').val(),
+				password:$('#password').val(),
+				tel:$('#tel').val(),
+				regionProvince:$('#regionProvince').val(),
+				regionCity:$('#regionCity').val(),
+				regionCountry:$('#regionCountry').val(),
+				detailAddress:$('#detailAddress').val(),
+				},
+		    success: function (json) {
+	            $("#myModal").modal("hide");
+	            oTable.api().ajax.reload();
+		    }
+		});
+	}
+
 	function _delFun(id) {
 		if(confirm('确认删除？')) {
 			$.ajax({
@@ -183,10 +238,8 @@ use app\assets\AppAsset;
 			    data: { id: id, },
 			    type: "post",
 			    success: function (resp) {
-			    	console.log(resp);
 			        oTable.api().ajax.reload();
 			    }, error: function (error) {
-			        console.log(error);
 			    }
 			});
 		}
@@ -197,15 +250,14 @@ use app\assets\AppAsset;
 			url: "?r=site/getregion",
 			type: 'POST',
 			dataType: 'json',
-			data: {
-			parentId: parentId
-		},
-		success: function(data, status) {
-			$(tag).html("");
-			$.each(data, function(index, address) {
-			$(tag).append("<option value=" + address['id'] + ">" + address['name'] + "</option>");
-			});
-		}
+			data: { parentId: parentId },
+			success: function(data, status) {
+				$(tag).html("");
+				$.each(data, function(index, address) {
+				$(tag).append("<option value=" + address['id'] + ">" + address['name'] + "</option>");
+				});
+				
+			}
 		});
 	}
 </script>

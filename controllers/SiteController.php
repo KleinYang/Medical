@@ -922,4 +922,47 @@ class SiteController extends Controller
             echo json_encode($count);
         }
     }
+
+    public function actionUsereditlist() {
+        if(Yii::$app->request->post()) {
+            $id = $_POST['id'];
+            $db = Yii::$app->db;
+            $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name, C.user_address, 
+                    C.region_province_id, C.region_country_id, C.region_city_id, C.user_address
+                    FROM user A, user_type B, user_address C
+                    WHERE A.user_type_id = B.user_type_id AND A.user_address_id = C.user_address_id 
+                    AND A.user_id = $id";
+            $results = $db->createCommand($sql)->query();
+            foreach ($results as $key => $value) {
+                $b['user_type'] = $value['user_type_name'];
+                $b['region_province_id'] = $value['region_province_id'];
+                $b['region_city_id'] = $value['region_city_id'];
+                $b['region_country_id'] = $value['region_country_id'];
+                $b['user_address'] = $value['user_address'];
+                $b['username'] = $value['username'];
+                $b['tel'] = $value['tel'];
+                $b['id'] = $value['user_id'];
+            }
+            echo json_encode($b);
+        }
+    }
+
+    public function actionUseredit() {
+        if(Yii::$app->request->post()) {
+
+            // $user_address = new User();
+            // $u_a['region_province_id'] = $_POST['regionProvince'];
+            // $u_a['region_city_id'] = $_POST['regionCity'];
+            // $u_a['region_country_id'] = $_POST['regionCountry'];
+            // $u_a['user_address'] = $_POST['detailAddress'];
+            // $user_address->updateAll($u_a , ['id' => $_POST['id']]);
+
+            $user = new User();
+            $u['username'] = $_POST['username'];
+            $u['password'] = md5($_POST['password']);
+            $u['tel'] = $_POST['tel'];
+            $user->updateAll($u , ['user_id' => intval($_POST['id'])]);
+            echo json_encode('success');
+        }
+    }
 }
