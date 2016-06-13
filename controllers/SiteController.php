@@ -950,18 +950,21 @@ class SiteController extends Controller
     public function actionUseredit() {
         if(Yii::$app->request->post()) {
 
-            // $user_address = new User();
-            // $u_a['region_province_id'] = $_POST['regionProvince'];
-            // $u_a['region_city_id'] = $_POST['regionCity'];
-            // $u_a['region_country_id'] = $_POST['regionCountry'];
-            // $u_a['user_address'] = $_POST['detailAddress'];
-            // $user_address->updateAll($u_a , ['id' => $_POST['id']]);
+            
 
             $user = new User();
             $u['username'] = $_POST['username'];
             $u['password'] = md5($_POST['password']);
             $u['tel'] = $_POST['tel'];
             $user->updateAll($u , ['user_id' => intval($_POST['id'])]);
+
+            $address_id = $user->find()->where(['user_id'=>$_POST['id']])->one()['user_address_id'];
+            $user_address = new UserAddress();
+            $u_a['region_province_id'] = $_POST['regionProvince'];
+            $u_a['region_city_id'] = $_POST['regionCity'];
+            $u_a['region_country_id'] = $_POST['regionCountry'];
+            $u_a['user_address'] = $_POST['detailAddress'];
+            $user_address->updateAll($u_a , ['user_address_id' => $address_id]);
             echo json_encode('success');
         }
     }
