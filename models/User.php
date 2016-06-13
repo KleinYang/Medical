@@ -20,6 +20,17 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     /**
      * @inheritdoc
      */
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'user Name',
+            'tel' => 'Tel',
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         /*foreach (self::$users as $user) {

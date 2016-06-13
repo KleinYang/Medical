@@ -66,17 +66,11 @@ AppAsset::register($this);
                                 .'</li>'
                                 ?>
                             </h3>
-                            
                         </div>
-                        
                     </div>
-                    
                 </div>
-                
             </div>
-        
         </div>
-        
     </div>
     
     <div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
@@ -85,11 +79,8 @@ AppAsset::register($this);
         <!-- Adding class "toggle-others" will keep only one menu item open at a time. -->
         <!-- Adding class "collapsed" collapse sidebar root elements and show only icons. -->
         <div class="sidebar-menu fusion-widget-area fusion-content-widget-area side-nav-left">
-            
             <div class="sidebar-menu-inner">    
-                
                 <header class="logo-env">
-                    
                     <!-- logo -->
                     <div class="logo">
                         <a href="./?r=site/index" class="logo-expanded">
@@ -244,6 +235,9 @@ AppAsset::register($this);
                             .Html::endForm()
                             .'</li>'
                             ?>
+                            <li>
+                                <a href="?r=site/manageuser"><button class="btn btn-link">管理登陆账号</button></a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

@@ -7,6 +7,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\models\User;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\UserAddress;
@@ -853,5 +854,72 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionManageuser() {
+        $regionProvinces = Region::getProvices();
+        $datas = [];
+        foreach ($regionProvinces as $key => $v) {
+            $data['id'] = $key;
+            $data['region_name'] = $v;
+            array_push($datas, $data);
+        }
+        return $this->render('manageuser', ['regionProvinces' => $datas]);
+    }
+
+    public function actionUserlist() {
+        $db = Yii::$app->db;
+        $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name, 
+                C.user_address, C.region_province_id, C.region_country_id, C.region_city_id
+                FROM user A, user_type B, user_address C
+                WHERE A.user_type_id = B.user_type_id AND A.user_address_id = C.user_address_id";
+        $results = $db->createCommand($sql)->query();
+        $data = [];
+        foreach ($results as $key => $value) {
+            $b['user_type'] = $value['user_type_name'];
+            $province = $value['region_province_id'];
+            $city = $value['region_city_id'];
+            $country = $value['region_country_id'];
+            $province_name = Region::find()->where(['region_id' => $province])->one()['region_name'];
+            $city_name = Region::find()->where(['region_id' => $city])->one()['region_name'];
+            $country_name = Region::find()->where(['region_id' => $country])->one()['region_name'];
+            $b['address'] = $province_name . $city_name . $country_name . $value['user_address'];
+            $b['username'] = $value['username'];
+            $b['tel'] = $value['tel'];
+            $b['id'] = $value['user_id'];
+            array_push($data, $b);
+        }
+        $a['data'] = $data;
+        echo json_encode($a);
+    }
+
+    public function actionUseradd() {
+        if(Yii::$app->request->post()) {
+            $user_address = new UserAddress();
+            $user_address->region_province_id = $_POST['regionProvince'];
+            $user_address->region_city_id = $_POST['regionCity'];
+            $user_address->region_country_id = $_POST['regionCountry'];
+            $user_address->user_address = $_POST['detailAddress'];
+            $user_address->save();
+
+            $user = new User();
+            $user->username = $_POST['username'];
+            $user->password = md5($_POST['password']);
+            $user->tel = $_POST['tel'];
+            $user->user_type_id = 1;
+            $user->user_address_id = $user_address->user_address_id;
+            $user->save();
+            echo json_encode('success');
+        }
+    }
+
+    public function actionUserdel() {
+        if(Yii::$app->request->post()) {
+            $id = $_POST['id'];
+            $address_id = User::find()->where(["user_id"=>$id])->one()['user_address_id'];
+            $count['user']=User::deleteAll(['user_id' => $id]);
+            $count['userAddress']=UserAddress::deleteAll(['user_address_id' => $address_id]);
+            echo json_encode($count);
+        }
     }
 }

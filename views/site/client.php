@@ -82,7 +82,6 @@ $grade = array('无', '一', '二', '三');
             <td class="client_detail"><a href="javascript:;" id="<?= $client->client_id; ?>" >
               <?= $client->client_name; ?></a></td>
             <td ><?= $client->client_contact ?></td>
-            
             <td><?php
               $clientAddress = $client->getClientAddress()->one();
               echo $clientAddress->getRegionProvince()->one()->region_name.
