@@ -851,12 +851,14 @@ class SiteController extends Controller
         return $this->render('dispatchlist', ['dispatchs' => $dispatchs]);
     }
 
-    public function actionAbout()
-    {
+    public function actionAbout() {
         return $this->render('about');
     }
 
     public function actionManageuser() {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect(array('/site/login'));
+        }
         $regionProvinces = Region::getProvices();
         $datas = [];
         foreach ($regionProvinces as $key => $v) {
@@ -949,9 +951,6 @@ class SiteController extends Controller
 
     public function actionUseredit() {
         if(Yii::$app->request->post()) {
-
-            
-
             $user = new User();
             $u['username'] = $_POST['username'];
             $u['password'] = md5($_POST['password']);

@@ -1,6 +1,4 @@
 <?php
-/* @var $this yii\web\View */
-/* @var $clients app\Models\manufacturer*/
 use app\assets\AppAsset;
 
 ?>
@@ -122,7 +120,7 @@ use app\assets\AppAsset;
 		    "destory": true,
 		    "retrieve": true,
 		    "processing": true,
-			"dom": "<'row'<'col-sm-6 myBtnBox'><'col-sm-6'f>r>"+"t"+"<'row'<'col-xs-6'i>>",// 布局
+			"dom": "<'row'<'col-sm-6 myBtnBox'><'col-sm-6'f>r>"+"t"+"<'row'<'col-xs-6'i>>",
 			"ajax": {
 			    "url":"?r=site/userlist",
 			    "type":"post",
@@ -139,7 +137,7 @@ use app\assets\AppAsset;
 				"createdCell": function (td, cellData, rowData, row, col) {
 				    $(td).html("<a href='javascript:void(0);'" +
                 	"onclick='_editFun("+cellData+")'>修改密码</a>&nbsp;&nbsp;")
-                    .append("<a href='javascript:void(0);' onclick='_delFun("+cellData+");'>删除</a>");
+                    .append("<a href='javascript:void(0);' onclick='_delFun("+JSON.stringify(rowData)+");'>删除</a>");
 				    }
 				},
             ],
@@ -164,6 +162,24 @@ use app\assets\AppAsset;
 	}
 
 	function _addFun() {
+		if( !$('#username').val() ) {
+			alert('用户名不能为空');
+			return false;
+		}
+		var pattern = /^[a-zA-Z0-9]{6,11}$/;
+		if( !pattern.test($('#password').val()) ) {
+			alert('密码只能是6-11位字母和数字');
+			return false;
+		}
+		pattern = /^[0-9]{11}$/;
+		if( !pattern.test($('#tel').val()) ) {
+			alert('手机号不符合格式');
+			return false;
+		}
+		if( !(($('#regionProvince').val())&&($('#regionCity').val())&&($('#regionCountry').val())&&($('#detailAddress').val())) ) {
+			alert('请将地址信息填写完整');
+			return false;
+		}
 		$.ajax({
 		    url: "?r=site/useradd",
 		    data: {
@@ -199,6 +215,7 @@ use app\assets\AppAsset;
 		    success: function (resp1) {
 		    	resp = eval('('+resp1+')');
 		        $('#username').val(resp.username);
+		        $('#password').val('');
 				$('#tel').val(resp['tel']);
 				$('#regionProvince').val(resp['region_province_id']);
 				getReion(resp['region_province_id'],"#regionCity");
@@ -211,6 +228,24 @@ use app\assets\AppAsset;
 	}
 
 	function _editAjax() {
+		if( !$('#username').val() ) {
+			alert('用户名不能为空');
+			return false;
+		}
+		var pattern = /^[a-zA-Z0-9]{6,11}$/;
+		if( !pattern.test($('#password').val()) ) {
+			alert('密码只能是6-11位字母和数字');
+			return false;
+		}
+		pattern = /^[0-9]{11}$/;
+		if( !pattern.test($('#tel').val()) ) {
+			alert('手机号不符合格式');
+			return false;
+		}
+		if( !(($('#regionProvince').val())&&($('#regionCity').val())&&($('#regionCountry').val())&&($('#detailAddress').val())) ) {
+			alert('请将地址信息填写完整');
+			return false;
+		}
 		$.ajax({
 		    type: 'POST',
 		    url: '?r=site/useredit',
@@ -231,11 +266,16 @@ use app\assets\AppAsset;
 		});
 	}
 
-	function _delFun(id) {
+	function _delFun(vo) {
+		var username = ("<?= Yii::$app->user->identity->username?>");
+		if(vo.username==username) {
+			alert('不能删除自己');
+			return false;
+		}
 		if(confirm('确认删除？')) {
 			$.ajax({
 			    url: "?r=site/userdel",
-			    data: { id: id, },
+			    data: { id: vo.id, },
 			    type: "post",
 			    success: function (resp) {
 			        oTable.api().ajax.reload();
