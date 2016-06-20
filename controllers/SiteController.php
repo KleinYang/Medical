@@ -38,7 +38,7 @@ use app\models\NotPurchaseBillForm;
 class SiteController extends Controller
 {
     public $enableCsrfValidation = false;
-    
+
     public function behaviors()
     {
         return [
@@ -193,7 +193,7 @@ class SiteController extends Controller
             $product->trade_unit_price      = $model->tradeUnitPrice;
             $product->product_validity      = $model->validity;
             $rand = time() . rand(1000, 9999);
-            $model->file->saveAs('E:\\Demo\\Medical\\upload\\' . $rand . $model->file->name);
+            $model->file->saveAs('./../upload/' . $rand . $model->file->name);
             $product->file = 'http://localhost/medical/upload/' . $rand . $model->file->name;
             //var_dump($product->file);exit();
             $product->save();
@@ -473,7 +473,7 @@ class SiteController extends Controller
                     } else {
                         $orderDetail->total_accounts = $model->totalAccounts[$i];
                     }
-                    
+
                     $orderDetail->order_detail_total_money = $orderDetail->product_price * $productNum;
                     $orderDetail->save();
                     $purchaseDetail->product_residue_num = $purchaseDetail->product_residue_num - $productNum;
@@ -658,7 +658,7 @@ class SiteController extends Controller
                     } else {
                         $orderDetail->total_accounts = $model->totalAccounts[$i];
                     }
-                    
+
                     $orderDetail->order_detail_total_money = $orderDetail->product_price * $productNum;
                     $orderDetail->save();
                     $purchaseDetail->product_residue_num = $purchaseDetail->product_residue_num - $productNum;
@@ -871,7 +871,7 @@ class SiteController extends Controller
 
     public function actionUserlist() {
         $db = Yii::$app->db;
-        $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name, 
+        $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name,
                 C.user_address, C.region_province_id, C.region_country_id, C.region_city_id
                 FROM user A, user_type B, user_address C
                 WHERE A.user_type_id = B.user_type_id AND A.user_address_id = C.user_address_id";
@@ -929,10 +929,10 @@ class SiteController extends Controller
         if(Yii::$app->request->post()) {
             $id = $_POST['id'];
             $db = Yii::$app->db;
-            $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name, C.user_address, 
+            $sql = "SELECT A.username, A.user_id, A.tel, B.user_type_name, C.user_address,
                     C.region_province_id, C.region_country_id, C.region_city_id, C.user_address
                     FROM user A, user_type B, user_address C
-                    WHERE A.user_type_id = B.user_type_id AND A.user_address_id = C.user_address_id 
+                    WHERE A.user_type_id = B.user_type_id AND A.user_address_id = C.user_address_id
                     AND A.user_id = $id";
             $results = $db->createCommand($sql)->query();
             foreach ($results as $key => $value) {

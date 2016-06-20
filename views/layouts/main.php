@@ -11,6 +11,14 @@ use app\assets\AppAsset;
 
 AppAsset::register($this);
 ?>
+<style media="screen">
+.modal-backdrop {
+    display: none;
+}
+#sidebar {
+    width:20%;
+}
+</style>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,7 +86,7 @@ AppAsset::register($this);
         <!-- Add "fixed" class to make the sidebar fixed always to the browser viewport. -->
         <!-- Adding class "toggle-others" will keep only one menu item open at a time. -->
         <!-- Adding class "collapsed" collapse sidebar root elements and show only icons. -->
-        <div class="sidebar-menu fusion-widget-area fusion-content-widget-area side-nav-left">
+        <div class="sidebar-menu fusion-widget-area fusion-content-widget-area side-nav-left" id="sidebar">
             <div class="sidebar-menu-inner">    
                 <header class="logo-env">
                     <!-- logo -->

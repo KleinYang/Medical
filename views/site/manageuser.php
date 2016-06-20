@@ -2,14 +2,10 @@
 use app\assets\AppAsset;
 
 ?>
-<style media="screen">
-.modal-backdrop {
-    display: none;
-   }
-</style>
+
 <div class="row">
     <div class="col-lg-10">
-    	<h1>客户列表</h1>
+    	<h1>用户列表</h1>
     	<div class="panel-body">
 			<table id="example" class="table table-striped table-bordered table-hover1" cellspacing="0" width="100%">
 			</table>
